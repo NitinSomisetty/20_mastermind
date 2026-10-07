@@ -3,6 +3,7 @@ from logic import feedback
 
 
 class Mastermind:
+    # Task 3: each difficulty changes the code length, symbols, and turn limit.
     DIFFICULTIES = {
         "easy": {"length": 4, "symbols": "123456", "turns": 10},
         "medium": {"length": 5, "symbols": "12345678", "turns": 12},
@@ -21,6 +22,7 @@ class Mastermind:
         self.quit = False
 
     def _show_history(self):
+        # Task 4: display only accepted guesses and their feedback.
         if not self.history:
             print("Guess history: none")
             return
@@ -54,6 +56,7 @@ class Mastermind:
                 self.code = [random.choice(self.symbols) for _ in range(self.code_length)]
                 self.history = []
                 self.turns = self.DIFFICULTIES[self.difficulty]["turns"]
+                # Reset lifecycle state when a new difficulty is selected.
                 self.game_over = False
                 self.won = False
                 self.quit = False
@@ -74,6 +77,7 @@ class Mastermind:
         while not self.game_over and self.turns > 0:
             raw = input(f"{self.turns} turns left > ").strip()
             if raw.lower() == "q":
+                # Task 2: quitting ends the game without consuming a turn.
                 self.game_over = True
                 self.quit = True
                 print("Game ended.")
@@ -81,6 +85,7 @@ class Mastermind:
 
             first, last = self.symbols[0], self.symbols[-1]
             if len(raw) != self.code_length or any(ch not in self.symbols for ch in raw):
+                # Task 4: reject malformed guesses before changing history or turns.
                 print(f"Invalid guess. Enter exactly {self.code_length} digits from {first} to {last}.")
                 self._show_history()
                 continue
@@ -93,12 +98,14 @@ class Mastermind:
             self._show_history()
 
             if exact == self.code_length:
+                # Task 2: mark a win immediately, including on the final turn.
                 self.won = True
                 self.game_over = True
                 print("Cracked the code!")
                 return
 
             if self.turns == 0:
+                # Task 2: reaching zero turns without a win is a loss.
                 self.won = False
                 self.game_over = True
                 print("You ran out of turns!")
