@@ -20,6 +20,14 @@ class Mastermind:
         self.won = False
         self.quit = False
 
+    def _show_history(self):
+        if not self.history:
+            print("Guess history: none")
+            return
+        print("Guess history:")
+        for index, (guess, exact, partial) in enumerate(self.history, start=1):
+            print(f"  {index}. {guess} -> exact={exact}, partial={partial}")
+
     @classmethod
     def _resolve_difficulty(cls, difficulty):
         if difficulty is None:
@@ -62,6 +70,7 @@ class Mastermind:
     def run(self):
         self.select_difficulty()
         self._print_rules()
+        self._show_history()
         while not self.game_over and self.turns > 0:
             raw = input(f"{self.turns} turns left > ").strip()
             if raw.lower() == "q":
@@ -72,7 +81,8 @@ class Mastermind:
 
             first, last = self.symbols[0], self.symbols[-1]
             if len(raw) != self.code_length or any(ch not in self.symbols for ch in raw):
-                print(f"Enter exactly {self.code_length} digits from {first} to {last}.")
+                print(f"Invalid guess. Enter exactly {self.code_length} digits from {first} to {last}.")
+                self._show_history()
                 continue
 
             guess = list(raw)
@@ -80,6 +90,7 @@ class Mastermind:
             self.history.append((raw, exact, partial))
             self.turns -= 1
             print("Exact:", exact, " Partial:", partial)
+            self._show_history()
 
             if exact == self.code_length:
                 self.won = True
